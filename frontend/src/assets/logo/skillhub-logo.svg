@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" fill="none" height="32">
+  <defs>
+    <linearGradient id="hubGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+    <linearGradient id="iconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Icon: stylised book / graduation diamond -->
+  <g transform="translate(0, 4)">
+    <!-- Open book base shape -->
+    <path d="M4 24 Q4 14 14 11 L20 10 L20 28 Q12 26 4 30 Z" fill="url(#iconGrad)" opacity="0.15"/>
+    <path d="M20 10 L26 11 Q36 14 36 24 L36 30 Q28 26 20 28 Z" fill="url(#iconGrad)" opacity="0.15"/>
+    <!-- Book spine -->
+    <line x1="20" y1="10" x2="20" y2="28" stroke="url(#iconGrad)" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Left page lines -->
+    <line x1="8" y1="16" x2="18" y2="14.5" stroke="url(#iconGrad)" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
+    <line x1="8" y1="20" x2="18" y2="18.5" stroke="url(#iconGrad)" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
+    <!-- Right page lines -->
+    <line x1="22" y1="14.5" x2="32" y2="16" stroke="url(#iconGrad)" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
+    <line x1="22" y1="18.5" x2="32" y2="20" stroke="url(#iconGrad)" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
+    <!-- Graduation cap on top -->
+    <polygon points="20,2 30,7 20,12 10,7" fill="url(#iconGrad)"/>
+    <line x1="30" y1="7" x2="30" y2="13" stroke="url(#iconGrad)" stroke-width="1.5" stroke-linecap="round"/>
+    <circle cx="30" cy="13.5" r="1.5" fill="url(#iconGrad)"/>
+  </g>
+
+  <!-- Wordmark: "Skill" plain + "Hub" gradient -->
+  <text x="43" y="27" font-family="'Inter', 'Segoe UI', sans-serif" font-size="19" font-weight="700" letter-spacing="-0.3" fill="currentColor">Skill</text>
+  <text x="90" y="27" font-family="'Inter', 'Segoe UI', sans-serif" font-size="19" font-weight="800" letter-spacing="-0.3" fill="url(#hubGrad)">Hub</text>
+</svg>

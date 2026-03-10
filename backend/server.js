@@ -1,0 +1,130 @@
+import express from 'express';
+import cors from 'cors';
+import config from './config/env.js';
+import { initializePool, closePool } from './config/database.js';
+import { seedIfEmpty } from './database/seeders/seed.js';
+import loggingMiddleware from './middlewares/logging.js';
+import errorHandlingMiddleware from './middlewares/errorHandling.js';
+import authRoutes from './routes/authRoutes.js';
+import apiRoutes from './routes/index.js';
+import cookieParser from 'cookie-parser';
+
+const app = express();
+
+// ==================== INITIALIZATION ====================
+const initializeServer = async () => {
+  try {
+    // Initialize database pool
+    await initializePool();
+    console.log('✅ Database pool initialized');
+    await seedIfEmpty();
+  } catch (error) {
+    console.error('❌ Failed to initialize database pool:', error.message);
+    process.exit(1);
+  }
+};
+
+// ==================== MIDDLEWARE ====================
+// CORS
+app.use(cors({
+  origin: config.CORS_ORIGIN || '*',
+  credentials: true,
+  optionsSuccessStatus: 200
+}));
+
+// Body parser
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+app.use(cookieParser());
+
+// Logging
+app.use(loggingMiddleware);
+
+// ==================== ROUTES ====================
+// Authentication routes
+app.use('/api/auth', authRoutes);
+
+// API routes (with /api prefix)
+app.use('/api', apiRoutes);
+
+// Root endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({
+    message: 'LMS Platform API',
+    version: '1.0.0',
+    endpoints: {
+      auth: '/auth',
+      api: '/api',
+      health: '/api/health'
+    }
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    error: 'Endpoint not found',
+    path: req.originalUrl,
+    method: req.method
+  });
+});
+
+// ==================== ERROR HANDLING ====================
+app.use(errorHandlingMiddleware);
+
+// ==================== SERVER START ====================
+const PORT = config.PORT || 5000;
+
+const startServer = async () => {
+  try {
+    await initializeServer();
+
+    const server = app.listen(PORT, () => {
+      console.log(`\n🚀 LMS Platform API running on http://localhost:${PORT}`);
+      console.log(`📚 Environment: ${config.NODE_ENV}`);
+      console.log(`🔐 Database: MongoDB Atlas (${process.env.MONGO_URI ? 'connected' : 'NOT SET'})`);
+      console.log(`📍 CORS Origin: ${config.CORS_ORIGIN || 'All origins'}\n`);
+    });
+
+    // Graceful shutdown
+    process.on('SIGTERM', async () => {
+      console.log('\n⏹️  SIGTERM signal received: closing HTTP server');
+      server.close(async () => {
+        console.log('✅ HTTP server closed');
+        try {
+          await closePool();
+          console.log('✅ Database pool closed');
+          process.exit(0);
+        } catch (error) {
+          console.error('❌ Error closing database pool:', error.message);
+          process.exit(1);
+        }
+      });
+    });
+
+    process.on('SIGINT', async () => {
+      console.log('\n⏹️  SIGINT signal received: closing HTTP server');
+      server.close(async () => {
+        console.log('✅ HTTP server closed');
+        try {
+          await closePool();
+          console.log('✅ Database pool closed');
+          process.exit(0);
+        } catch (error) {
+          console.error('❌ Error closing database pool:', error.message);
+          process.exit(1);
+        }
+      });
+    });
+
+  } catch (error) {
+    console.error('❌ Failed to start server:', error.message);
+    process.exit(1);
+  }
+};
+
+// Start the server
+startServer();
+
+export default app;
