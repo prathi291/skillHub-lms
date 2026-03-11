@@ -74,14 +74,14 @@ app.use((req, res) => {
 app.use(errorHandlingMiddleware);
 
 // ==================== SERVER START ====================
-const PORT = config.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
   try {
     await initializeServer();
 
     const server = app.listen(PORT, () => {
-      console.log(`\n🚀 LMS Platform API running on http://localhost:${PORT}`);
+      console.log(`Server running on port ${PORT}`);
       console.log(`📚 Environment: ${config.NODE_ENV}`);
       console.log(`🔐 Database: MongoDB Atlas (${process.env.MONGO_URI ? 'connected' : 'NOT SET'})`);
       console.log(`📍 CORS Origin: ${config.CORS_ORIGIN || 'All origins'}\n`);
