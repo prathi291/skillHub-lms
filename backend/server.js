@@ -35,7 +35,11 @@ const initializeServer = async () => {
 // ==================== MIDDLEWARE ====================
 // CORS
 app.use(cors({
-  origin: config.CORS_ORIGIN || '*',
+  origin: [
+    "http://localhost:5173",
+    "https://skill-hub-lms.vercel.app",
+    "https://skill-hub-6y6plte27-prathibhas-projects-41cdbc9e.vercel.app"
+  ],
   credentials: true,
   optionsSuccessStatus: 200
 }));
