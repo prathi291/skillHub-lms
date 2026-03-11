@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { formatPrice } from '../utils/formatPrice';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 const LEVELS = [
     { label: 'Beginner', value: 'beginner' },
@@ -275,7 +275,7 @@ const Courses = () => {
             if (selectedLevels.length === 1) params.set('level', selectedLevels[0]);
             if (minRating !== null) params.set('rating', String(minRating));
 
-            const res = await fetch(`${API_URL}/courses?${params.toString()}`);
+            const res = await fetch(`${API_URL}/api/courses?${params.toString()}`);
             const data = await res.json();
             const mapped = (data.courses || []).map(mapCourse);
 

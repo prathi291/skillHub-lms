@@ -4,7 +4,7 @@ const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
 
             // ── Step 2: Validate the session cookie with the backend ─────────────
             // Only fires when there's a saved user (cookie likely exists).
-            const res = await fetch(`${API_URL}/auth/me`, { credentials: 'include' });
+            const res = await fetch(`${API_URL}/api/auth/me`, { credentials: 'include' });
 
             if (res.ok) {
                 const data = await res.json();
@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
-            const res = await fetch(`${API_URL}/auth/login`, {
+            const res = await fetch(`${API_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
@@ -110,7 +110,7 @@ export const AuthProvider = ({ children }) => {
 
     const signup = async (name, email, password, role = 'student') => {
         try {
-            const res = await fetch(`${API_URL}/auth/signup`, {
+            const res = await fetch(`${API_URL}/api/auth/signup`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, email, password, role }),
@@ -131,7 +131,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const updateProfile = async (formData) => {
-        const res = await fetch(`${API_URL}/users/profile`, {
+        const res = await fetch(`${API_URL}/api/users/profile`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),
@@ -148,7 +148,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         try {
-            await fetch(`${API_URL}/auth/logout`, { method: 'POST', credentials: 'include' });
+            await fetch(`${API_URL}/api/auth/logout`, { method: 'POST', credentials: 'include' });
         } catch (error) {
             console.error('Logout error:', error);
         } finally {
@@ -158,7 +158,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const forgotPassword = async (email) => {
-        const res = await fetch(`${API_URL}/auth/forgot-password`, {
+        const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email })
@@ -169,7 +169,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const resetPassword = async (token, password) => {
-        const res = await fetch(`${API_URL}/auth/reset-password`, {
+        const res = await fetch(`${API_URL}/api/auth/reset-password`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token, password })

@@ -5,7 +5,7 @@ const CourseContext = createContext();
 
 export const useCourses = () => useContext(CourseContext);
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export const CourseProvider = ({ children }) => {
     const { user } = useAuth();
@@ -17,7 +17,7 @@ export const CourseProvider = ({ children }) => {
 
     const fetchCourses = async () => {
         try {
-            const res = await fetch(`${API_URL}/courses`);
+            const res = await fetch(`${API_URL}/api/courses`);
             const data = await res.json();
             // Map MongoDB _id to id for frontend compatibility
             const mapped = (data.courses || []).map(c => ({
@@ -37,7 +37,7 @@ export const CourseProvider = ({ children }) => {
 
     const searchCourses = async (query) => {
         try {
-            const res = await fetch(`${API_URL}/courses?search=${encodeURIComponent(query)}`);
+            const res = await fetch(`${API_URL}/api/courses?search=${encodeURIComponent(query)}`);
             const data = await res.json();
             return (data.courses || []).map(c => ({
                 ...c,
@@ -61,7 +61,7 @@ export const CourseProvider = ({ children }) => {
 
         setEnrollmentsLoading(true);
         try {
-            const res = await fetch(`${API_URL}/enrollments`, { credentials: 'include' });
+            const res = await fetch(`${API_URL}/api/enrollments`, { credentials: 'include' });
             if (res.ok) {
                 const data = await res.json();
                 // Map to get just the IDs, handling potential population
@@ -83,7 +83,7 @@ export const CourseProvider = ({ children }) => {
             return;
         }
         try {
-            const res = await fetch(`${API_URL}/wishlist`, { credentials: 'include' });
+            const res = await fetch(`${API_URL}/api/wishlist`, { credentials: 'include' });
             if (res.ok) {
                 const data = await res.json();
                 setWishlist(data.wishlist || []);
@@ -104,7 +104,7 @@ export const CourseProvider = ({ children }) => {
 
     const enrollUser = async (courseId) => {
         try {
-            const res = await fetch(`${API_URL}/enroll/${courseId}`, {
+            const res = await fetch(`${API_URL}/api/enroll/${courseId}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include'
@@ -122,7 +122,7 @@ export const CourseProvider = ({ children }) => {
 
     const toggleWishlist = async (courseId) => {
         try {
-            const res = await fetch(`${API_URL}/wishlist`, {
+            const res = await fetch(`${API_URL}/api/wishlist`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ courseId }),
@@ -141,7 +141,7 @@ export const CourseProvider = ({ children }) => {
 
     const fetchCourseDetails = async (courseId) => {
         try {
-            const res = await fetch(`${API_URL}/courses/${courseId}`, { credentials: 'include' });
+            const res = await fetch(`${API_URL}/api/courses/${courseId}`, { credentials: 'include' });
             if (res.ok) {
                 const data = await res.json();
                 return {
@@ -158,7 +158,7 @@ export const CourseProvider = ({ children }) => {
 
     const markLessonComplete = async (courseId, lessonId) => {
         try {
-            const res = await fetch(`${API_URL}/progress`, {
+            const res = await fetch(`${API_URL}/api/progress`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ courseId, lessonId }),
@@ -176,7 +176,7 @@ export const CourseProvider = ({ children }) => {
 
     const fetchCourseProgress = async (courseId) => {
         try {
-            const res = await fetch(`${API_URL}/progress/${courseId}`, { credentials: 'include' });
+            const res = await fetch(`${API_URL}/api/progress/${courseId}`, { credentials: 'include' });
             if (res.ok) {
                 const data = await res.json();
                 return data.progress;
