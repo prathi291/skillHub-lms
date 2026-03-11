@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
-import 'dotenv/config';
 
 export async function initializePool() {
   try {
     const mongoUri = process.env.MONGO_URI;
 
     if (!mongoUri) {
-      throw new Error('MONGO_URI is not defined in your .env file.');
+      console.warn('⚠️ MONGO_URI is not defined. Skipping database connection for now.');
+      return null;
     }
 
     await mongoose.connect(mongoUri);
@@ -14,7 +14,9 @@ export async function initializePool() {
     return mongoose.connection;
   } catch (error) {
     console.error('❌ Failed to connect to MongoDB:', error.message);
-    process.exit(1);
+    // On cloud environments like Render, we might want to let the server start
+    // but log the error so we can debug the environment variables.
+    return null;
   }
 }
 

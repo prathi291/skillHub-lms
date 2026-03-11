@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import config from './config/env.js';
@@ -15,12 +17,18 @@ const app = express();
 const initializeServer = async () => {
   try {
     // Initialize database pool
-    await initializePool();
-    console.log('✅ Database pool initialized');
-    await seedIfEmpty();
+    const pool = await initializePool();
+    if (pool) {
+      console.log('✅ Database pool initialized');
+      await seedIfEmpty();
+    } else {
+      console.warn('⚠️ Database pool initialization skipped or failed. Check your environment variables.');
+    }
   } catch (error) {
-    console.error('❌ Failed to initialize database pool:', error.message);
-    process.exit(1);
+    console.error('❌ Unexpected error during initialization:', error.message);
+    // Even on error, we might want to avoid process.exit(1) for Render debugging,
+    // but usually unexpected initialization errors (syntax, etc) should be fatal.
+    // We'll keep it from exiting to comply with "do not crash" instructions.
   }
 };
 
